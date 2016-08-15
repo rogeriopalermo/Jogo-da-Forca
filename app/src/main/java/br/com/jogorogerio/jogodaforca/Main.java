@@ -1,28 +1,33 @@
 package br.com.jogorogerio.jogodaforca;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Path;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
+import br.com.jogorogerio.jogodaforca.DAO.JogoDaVelhaDAO;
+
 public class Main extends AppCompatActivity {
+    public static final int REQUEST_CODE = 123;
     private Button btJogar;
     private Button btPlay;
     private EditText etLetra;
     private ForcaView forcaView;
     private ForcaController forcaController;
-
-    private String[] palavras = {"alura", "caelum"};
+    private ArrayList<String> wordsList;
+    private String wordRegisteredForGame = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,38 @@ public class Main extends AppCompatActivity {
         init();
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.menu_adicionarPalavra) {
+            Intent intent = new Intent(this, InserirPalavrasActivity.class);
+            startActivityForResult(intent, REQUEST_CODE);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE: {
+                if(resultCode == Activity.RESULT_OK) {
+                    String palavra = data.getStringExtra(InserirPalavrasActivity.PALAVRA);
+                    wordRegisteredForGame = palavra;
+                    setForcaController(new ForcaController(wordRegisteredForGame));
+                    startGame();
+                }
+            }
+        }
+    }
+
     private void init() {
 
         btJogar.setOnClickListener(new View.OnClickListener() {
@@ -53,6 +90,7 @@ public class Main extends AppCompatActivity {
                 if(getForcaController().isTerminou()) {
                     btJogar.setEnabled(false);
                     btPlay.setEnabled(true);
+                    etLetra.setEnabled(false);
                     if (getForcaController().isMorreu()) {
                         Toast.makeText(Main.this, "Ops! Você perdeu!", Toast.LENGTH_LONG).show();
                     }
@@ -65,16 +103,23 @@ public class Main extends AppCompatActivity {
         btPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setForcaController(new ForcaController(palavras[new Random().nextInt(palavras.length)]));
-                forcaView.setForcaController(getForcaController());
-                forcaView.invalidate();
-                forcaView.setPathForca(new Path()); // restarting the path the drawing of the hangman AND the letters' gaps will be reseted.
-                etLetra.getText().clear();
-                etLetra.setEnabled(true);
-                btJogar.setEnabled(true);
-                btPlay.setEnabled(false);
+                JogoDaVelhaDAO dao = new JogoDaVelhaDAO(Main.this);
+                wordsList = dao.retrieveWords();
+                dao.close();
+                setForcaController(new ForcaController(wordsList.get(new Random().nextInt(wordsList.size()))));
+                startGame();
             }
         });
+    }
+
+    private void startGame() {
+        forcaView.setForcaController(getForcaController());
+        forcaView.invalidate();
+        forcaView.setPathForca(new Path()); // restarting the path the drawing of the hangman AND the letters' gaps will be reseted.
+        etLetra.getText().clear();
+        etLetra.setEnabled(true);
+        btJogar.setEnabled(true);
+        btPlay.setEnabled(false);
     }
 
     public ForcaController getForcaController() {
