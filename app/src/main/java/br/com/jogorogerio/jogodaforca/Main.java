@@ -1,5 +1,9 @@
 package br.com.jogorogerio.jogodaforca;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -64,6 +68,7 @@ public class Main extends AppCompatActivity {
                 setForcaController(new ForcaController(palavras[new Random().nextInt(palavras.length)]));
                 forcaView.setForcaController(getForcaController());
                 forcaView.invalidate();
+                forcaView.setPathForca(new Path()); // restarting the path the drawing of the hangman AND the letters' gaps will be reseted.
                 etLetra.getText().clear();
                 etLetra.setEnabled(true);
                 btJogar.setEnabled(true);

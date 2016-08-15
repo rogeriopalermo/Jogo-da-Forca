@@ -17,6 +17,7 @@ public class ForcaView extends PlanoCartesianoView {
 
     public ForcaView(Context context) {
         super(context);
+
     }
 
     public ForcaView(Context context, AttributeSet attrs) {
