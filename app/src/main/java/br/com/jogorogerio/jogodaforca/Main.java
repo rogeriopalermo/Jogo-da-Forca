@@ -5,15 +5,17 @@ import android.content.Intent;
 import android.graphics.Path;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -95,24 +97,7 @@ public class Main extends AppCompatActivity {
         btJogar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(etLetra.getText().toString().trim().length() == 0) {
-                    Toast.makeText(Main.this, "Select a letter!", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                getForcaController().joga(etLetra.getText().toString().toLowerCase().trim().charAt(0));
-                forcaView.invalidate();
-                etLetra.getText().clear();
-                if(getForcaController().isTerminou()) {
-                    btJogar.setEnabled(false);
-                    btPlay.setEnabled(true);
-                    etLetra.setEnabled(false);
-                    if (getForcaController().isMorreu()) {
-                        Toast.makeText(Main.this, "You lose!", Toast.LENGTH_LONG).show();
-                    }
-                    else if (getForcaController().isGanhou()) {
-                        Toast.makeText(Main.this, "You win!", Toast.LENGTH_LONG).show();
-                    }
-                }
+                makePlay();
             }
         });
         btPlay.setOnClickListener(new View.OnClickListener() {
@@ -121,10 +106,37 @@ public class Main extends AppCompatActivity {
                 JogoDaVelhaDAO dao = new JogoDaVelhaDAO(Main.this);
                 wordsList = dao.retrieveWords();
                 dao.close();
-                setForcaController(new ForcaController(wordsList.get(new Random().nextInt(wordsList.size())).getNome()));
-                startGame();
+                if(!(wordsList.size() == 0)) {
+                    setForcaController(new ForcaController(wordsList.get(new Random().nextInt(wordsList.size())).getNome()));
+                    startGame();
+                } else {
+                    Toast.makeText(Main.this, "Insert a word to start playing!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Main.this, InserirPalavrasActivity.class);
+                    startActivityForResult(intent, REQUEST_CODE);
+                }
             }
         });
+    }
+
+    private void makePlay() {
+        if(etLetra.getText().toString().trim().length() == 0) {
+            Toast.makeText(Main.this, "Select a letter!", Toast.LENGTH_LONG).show();
+            return;
+        }
+        getForcaController().joga(etLetra.getText().toString().toLowerCase().trim().charAt(0));
+        forcaView.invalidate();
+        etLetra.getText().clear();
+        if(getForcaController().isTerminou()) {
+            btJogar.setEnabled(false);
+            btPlay.setEnabled(true);
+            etLetra.setEnabled(false);
+            if (getForcaController().isMorreu()) {
+                Toast.makeText(Main.this, "You lose!", Toast.LENGTH_LONG).show();
+            }
+            else if (getForcaController().isGanhou()) {
+                Toast.makeText(Main.this, "You win!", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private void startGame() {
@@ -132,9 +144,31 @@ public class Main extends AppCompatActivity {
         forcaView.invalidate();
         forcaView.setPathForca(new Path()); // restarting the path the drawing of the hangman AND the letters' gaps will be reseted.
         etLetra.getText().clear();
+        etLetra.setFocusable(true);
         etLetra.setEnabled(true);
+        if(etLetra.requestFocus()) {
+            InputMethodManager mgr = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+            mgr.showSoftInput(etLetra, InputMethodManager.SHOW_IMPLICIT);
+        }
         btJogar.setEnabled(true);
         btPlay.setEnabled(false);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int keyAction = event.getAction();
+
+        if(keyAction == KeyEvent.ACTION_UP) {
+            int keycode = event.getKeyCode();
+            //gets and converts the unicode to a character
+            //int keyunicode = event.getUnicodeChar(event.getMetaState());
+            //char character = (char) keyunicode;
+
+            if(keycode == 66) {
+                makePlay();
+            }
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     public ForcaController getForcaController() {

@@ -39,8 +39,6 @@ public class InserirPalavrasActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 insertWordTask(etNewWord);
-                setResult(Activity.RESULT_CANCELED);
-                finish();
             }
         });
     }
@@ -48,8 +46,8 @@ public class InserirPalavrasActivity extends AppCompatActivity {
     private void insertWordTask(EditText etNewWord) {
         JogoDaVelhaDAO dao = new JogoDaVelhaDAO(InserirPalavrasActivity.this);
         String word = etNewWord.getText().toString();
-        dao.insertWord(word);
-        Toast.makeText(InserirPalavrasActivity.this, "Palavra Inserida = " + word, Toast.LENGTH_SHORT).show();
+        dao.insertWord(word.toLowerCase());
+        Toast.makeText(InserirPalavrasActivity.this, "Inserted the word: " + word, Toast.LENGTH_SHORT).show();
         dao.close();
     }
 }

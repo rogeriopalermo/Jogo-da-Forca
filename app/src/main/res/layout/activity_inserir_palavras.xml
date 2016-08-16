@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:hint="Insert the word you want to insert"
         android:id="@+id/etNewWord"
+        android:maxLength="9"
         />
 
     <RelativeLayout
@@ -33,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:id="@+id/btnInsertAndRandomize"
-            android:text="Insert and randomize"
+            android:text="Insert word"
             />
 
     </RelativeLayout>

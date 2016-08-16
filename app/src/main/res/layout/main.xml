@@ -12,7 +12,9 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="br.com.jogorogerio.jogodaforca.Main"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
 
     <br.com.jogorogerio.jogodaforca.ForcaView
         android:layout_width="wrap_content"
@@ -25,7 +27,8 @@
         android:id="@+id/etLetra"
         android:layout_gravity="center_horizontal|bottom"
         android:maxLength="1"
-        android:enabled="false"/>
+        android:enabled="false"
+        />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

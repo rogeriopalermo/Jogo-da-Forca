@@ -31,28 +31,28 @@ public class ForcaView extends PlanoCartesianoView {
     private ForcaController forcaController;
 
     private void plotaCabeca() {
-        getPathForca().addCircle(toPixel(7), toPixel(3), toPixel(1), Path.Direction.CW);
+        getPathForca().addCircle(toPixel(5), toPixel(3), toPixel(1), Path.Direction.CW);
     }
 
     private void plotaForca() {
+        getPathForca().moveTo(toPixel(0), toPixel(10));
+        getPathForca().lineTo(toPixel(1), toPixel(10));
+
         getPathForca().moveTo(toPixel(1), toPixel(10));
-        getPathForca().lineTo(toPixel(3), toPixel(10));
+        getPathForca().lineTo(toPixel(1), toPixel(1));
 
-        getPathForca().moveTo(toPixel(2), toPixel(10));
-        getPathForca().lineTo(toPixel(2), toPixel(1));
-
-        getPathForca().rLineTo(toPixel(5), 0);
+        getPathForca().rLineTo(toPixel(4), 0);
 
         getPathForca().rLineTo(0, toPixel(1));
     }
 
     private void plotaCorpo() {
-        getPathForca().moveTo(toPixel(7), toPixel(4));
-        getPathForca().lineTo(toPixel(7), toPixel(7));
+        getPathForca().moveTo(toPixel(5), toPixel(4));
+        getPathForca().lineTo(toPixel(5), toPixel(7));
     }
 
     private void plotaMembro(Membro membro, Lado lado) {
-        final int posicaoDoCorpo = 7; //posicao do corpo no eixo x
+        final int posicaoDoCorpo = 5; //posicao do corpo no eixo x
         final int alturaDoBraco = 5; //define o y onde sera desenhado o braço
         final int alturaDaPerna = 7; // define o y onde sera desenhado a perna
 
@@ -70,6 +70,20 @@ public class ForcaView extends PlanoCartesianoView {
             getPathForca().lineTo(toPixel(posicaoDoCorpo +1), toPixel(alturaFinal));
         } else {
             getPathForca().lineTo(toPixel(posicaoDoCorpo-1), toPixel(alturaFinal));
+        }
+    }
+
+    private void plotaTracos() {
+        int eixoX = toPixel(1);
+        getPathForca().moveTo(eixoX + 5, toPixel(10));
+
+        if(getForcaController()==null) {
+            return;
+        }
+
+        for(int i = 0; i< getForcaController().getPalavraAteAgora().length();i++) {
+            getPathForca().rMoveTo(6, 0);
+            getPathForca().rLineTo(toPixel(1), 0);
         }
     }
 
@@ -133,22 +147,8 @@ public class ForcaView extends PlanoCartesianoView {
         return painttraco;
     }
 
-    private void plotaTracos() {
-        int eixoX = toPixel(3);
-        getPathForca().moveTo(eixoX, toPixel(10));
-
-        if(getForcaController()==null) {
-            return;
-        }
-
-        for(int i = 0; i< getForcaController().getPalavraAteAgora().length();i++) {
-            getPathForca().rMoveTo(10, 0);
-            getPathForca().rLineTo(toPixel(1), 0);
-        }
-    }
-
     private void drawLetrasCorretas(Canvas canvas) {
-        int eixoX = toPixel(3);
+        int eixoX = toPixel(1);
         getPathForca().moveTo(eixoX , toPixel(10));
         eixoX += 35;
 
@@ -161,7 +161,7 @@ public class ForcaView extends PlanoCartesianoView {
             char c = getForcaController().getPalavraAteAgora().charAt(i);
             canvas.drawText(c+"",
                                 eixoX +
-                                        ((toPixel(1) + 10) * i),
+                                        ((toPixel(1) + 6) * i),
                                             toPixel(10)- 15,
                                                 getPaintTraco());
         }
