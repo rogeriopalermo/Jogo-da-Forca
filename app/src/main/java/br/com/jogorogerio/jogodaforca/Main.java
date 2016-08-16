@@ -18,15 +18,17 @@ import java.util.List;
 import java.util.Random;
 
 import br.com.jogorogerio.jogodaforca.DAO.JogoDaVelhaDAO;
+import br.com.jogorogerio.jogodaforca.model.OptionName;
 
 public class Main extends AppCompatActivity {
     public static final int REQUEST_CODE = 123;
+    public static final int LISTANOMESACTIVITY_CODE = 124;
     private Button btJogar;
     private Button btPlay;
     private EditText etLetra;
     private ForcaView forcaView;
     private ForcaController forcaController;
-    private ArrayList<String> wordsList;
+    private List<OptionName> wordsList;
     private String wordRegisteredForGame = "";
 
     @Override
@@ -56,6 +58,9 @@ public class Main extends AppCompatActivity {
         if(item.getItemId() == R.id.menu_adicionarPalavra) {
             Intent intent = new Intent(this, InserirPalavrasActivity.class);
             startActivityForResult(intent, REQUEST_CODE);
+        } else if (item.getItemId() == R.id.menu_listNames) {
+            Intent intent = new Intent(this, ListaNomesActivity.class);
+            startActivityForResult(intent, LISTANOMESACTIVITY_CODE);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -71,6 +76,16 @@ public class Main extends AppCompatActivity {
                     setForcaController(new ForcaController(wordRegisteredForGame));
                     startGame();
                 }
+                break;
+            }
+            case LISTANOMESACTIVITY_CODE: {
+                if(resultCode == Activity.RESULT_OK) {
+                    String palavra = data.getStringExtra("name");
+                    wordRegisteredForGame = palavra;
+                    setForcaController(new ForcaController(wordRegisteredForGame));
+                    startGame();
+                }
+                break;
             }
         }
     }
@@ -81,7 +96,7 @@ public class Main extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(etLetra.getText().toString().trim().length() == 0) {
-                    Toast.makeText(Main.this, "Faça uma jogada!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Main.this, "Select a letter!", Toast.LENGTH_LONG).show();
                     return;
                 }
                 getForcaController().joga(etLetra.getText().toString().toLowerCase().trim().charAt(0));
@@ -92,10 +107,10 @@ public class Main extends AppCompatActivity {
                     btPlay.setEnabled(true);
                     etLetra.setEnabled(false);
                     if (getForcaController().isMorreu()) {
-                        Toast.makeText(Main.this, "Ops! Você perdeu!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(Main.this, "You lose!", Toast.LENGTH_LONG).show();
                     }
                     else if (getForcaController().isGanhou()) {
-                        Toast.makeText(Main.this, "Você ganhou!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(Main.this, "You win!", Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -106,7 +121,7 @@ public class Main extends AppCompatActivity {
                 JogoDaVelhaDAO dao = new JogoDaVelhaDAO(Main.this);
                 wordsList = dao.retrieveWords();
                 dao.close();
-                setForcaController(new ForcaController(wordsList.get(new Random().nextInt(wordsList.size()))));
+                setForcaController(new ForcaController(wordsList.get(new Random().nextInt(wordsList.size())).getNome()));
                 startGame();
             }
         });

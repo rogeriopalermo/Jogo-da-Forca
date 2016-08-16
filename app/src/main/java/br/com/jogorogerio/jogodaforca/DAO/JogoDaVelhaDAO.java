@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.jogorogerio.jogodaforca.model.OptionName;
+
 /**
  * Created by Rogerio on 15/08/2016.
  */
@@ -39,16 +41,25 @@ public class JogoDaVelhaDAO extends SQLiteOpenHelper{
         db.insert("palavras", null, content);
     }
 
-    public ArrayList<String> retrieveWords() {
+    public List<OptionName> retrieveWords() {
         SQLiteDatabase db = getReadableDatabase();
         String sql = "Select * from palavras";
         Cursor c = db.rawQuery(sql, null);
-        ArrayList<String> words = new ArrayList<String>();
+        List<OptionName> words = new ArrayList<OptionName>();
         while (c.moveToNext()) {
-            String word = c.getString(c.getColumnIndex("palavra"));
-            words.add(word);
+            OptionName option = new OptionName();
+            option.setId(c.getLong(c.getColumnIndex("id")));
+            option.setNome(c.getString(c.getColumnIndex("palavra")));
+            words.add(option);
         }
         c.close();
         return words;
+    }
+
+    public void deleteOption(OptionName option) {
+        SQLiteDatabase db = getWritableDatabase();
+        String[] params = {option.getId()+""};
+
+        db.delete("palavras", "id = ?", params);
     }
 }

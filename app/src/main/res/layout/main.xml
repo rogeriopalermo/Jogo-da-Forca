@@ -21,24 +21,29 @@
         android:layout_gravity="center"/>
     <EditText
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:id="@+id/etLetra"
         android:layout_gravity="center_horizontal|bottom"
         android:maxLength="1"
         android:enabled="false"/>
-    <Button
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/btJogar"
-        android:enabled="false"
-        android:layout_gravity="center_horizontal|bottom"
-        android:text="jogar"/>
-    <Button
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/btPlay"
-        android:enabled="true"
-        android:layout_gravity="center_horizontal|bottom"
-        android:text="play"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btJogar"
+            android:enabled="false"
+            android:layout_gravity="center_horizontal|bottom"
+            android:text="jogar"/>
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/btPlay"
+            android:enabled="true"
+            android:layout_gravity="center_horizontal|bottom"
+            android:text="play"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
 </LinearLayout>
 </ScrollView>

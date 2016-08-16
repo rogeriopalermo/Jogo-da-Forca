@@ -68,7 +68,7 @@ public class PlanoCartesianoView extends View {
             setMenorLadoDisplay(getHeight());
 
         setUnidade(menorLadoDisplay/10);
-        drawPlanoCartesiano(canvas);
+        //drawPlanoCartesiano(canvas);
     }
 
     public int getMenorLadoDisplay() {
