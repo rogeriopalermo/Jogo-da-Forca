@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
 
+import br.com.jogorogerio.jogodaforca.graphic.Screen;
+
 /**
  * Created by Rogerio on 15/08/2016.
  */
@@ -14,7 +16,6 @@ public class ForcaView extends PlanoCartesianoView {
 
     private enum Membro {braco, perna}
     private enum Lado {direito, esquerdo}
-
     public ForcaView(Context context) {
         super(context);
 
@@ -35,6 +36,7 @@ public class ForcaView extends PlanoCartesianoView {
     }
 
     private void plotaForca() {
+
         getPathForca().moveTo(toPixel(0), toPixel(10));
         getPathForca().lineTo(toPixel(1), toPixel(10));
 
@@ -73,17 +75,86 @@ public class ForcaView extends PlanoCartesianoView {
         }
     }
 
-    private void plotaTracos() {
-        int eixoX = toPixel(1);
-        getPathForca().moveTo(eixoX + 5, toPixel(10));
+    private void plotaTracosLetras(Path path) {
+        int eixoX = 1; //used to position in which line to draw in the X axis
+        int eixoY = 10; //used to position in which line to draw in the Y axis
+        path.moveTo(eixoX + 5, toPixel(eixoY));
 
         if(getForcaController()==null) {
             return;
         }
+        int limitCounter = 0;
+        String word = getForcaController().getPalavraAteAgora();
 
-        for(int i = 0; i< getForcaController().getPalavraAteAgora().length();i++) {
-            getPathForca().rMoveTo(6, 0);
-            getPathForca().rLineTo(toPixel(1), 0);
+        for(int i = 0; i< word.length();i++) {
+            if(limitCounter == 12) {
+                eixoY++;
+                eixoX = 1;
+                limitCounter=0;
+                path.moveTo(toPixel(eixoX) + 5, toPixel(eixoY));
+            }
+            path.moveTo(toPixel(eixoX) + 5, toPixel(eixoY));
+            eixoX++;
+            String comparison = String.valueOf(word.charAt(i));
+            if(comparison.equals("_"))
+                path.lineTo(toPixel(eixoX), toPixel(eixoY));
+
+            limitCounter++;
+        }
+    }
+    private void plotaTracosEspacos(Path path2) {
+        int eixoX = 1;
+        int eixoY = 10;
+        path2.moveTo(eixoX + 5, toPixel(eixoY));
+
+        if(getForcaController()==null) {
+            return;
+        }
+        int limitCounter = 0;
+        String word = getForcaController().getPalavraParaAdivinhar();
+
+        for(int i = 0; i< word.length();i++) {
+            if(limitCounter == 12) {
+                eixoY++;
+                eixoX = 1;
+                limitCounter=0;
+                path2.moveTo(toPixel(eixoX) +5, toPixel(eixoY));
+            }
+            path2.moveTo(toPixel(eixoX) + 5, toPixel(eixoY));
+            eixoX++;
+            if(Character.isWhitespace(word.charAt(i))) {
+                path2.lineTo(toPixel(eixoX), toPixel(eixoY));
+            }
+            limitCounter++;
+        }
+    }
+    private void drawLetrasCorretas(Canvas canvas) {
+        int eixoX = toPixel(1);
+        int eixoY = 10;
+        int limitCounter = 0;
+        int spaceCounter = -1;
+        getPathForca().moveTo(eixoX , toPixel(eixoY));
+        eixoX += 35;
+
+        if(getForcaController() == null) {
+            return;
+
+        }
+
+        for(int i = 0; i < getForcaController().getPalavraAteAgora().length(); i++) {
+            spaceCounter++;
+            if(limitCounter == 12) {
+                limitCounter = 0;
+                spaceCounter = 0;
+                eixoY++;
+            }
+            char c = getForcaController().getPalavraAteAgora().charAt(i);
+            canvas.drawText(c+"",
+                    eixoX +
+                            ((toPixel(1) ) * spaceCounter),
+                    toPixel(eixoY),
+                    getPaintTraco());
+            limitCounter++;
         }
     }
 
@@ -117,10 +188,26 @@ public class ForcaView extends PlanoCartesianoView {
 
         drawLetrasCorretas(canvas);
 
-        plotaTracos();
-
         canvas.drawPath(getPathForca(), getPaintForca());
+
+        Path path = new Path();
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(8);
+       // plotaTracosLetras(path);
+
+        Path path2 = new Path();
+        Paint paint2 = new Paint();
+        paint2.setColor(Color.RED);
+        paint2.setStyle(Paint.Style.STROKE);
+        paint2.setStrokeWidth(8);
+     //   plotaTracosEspacos(path2);
+
+     //   canvas.drawPath(path, paint);
+     //  canvas.drawPath(path2,paint2);
     }
+
 
     public Path getPathForca() {
         return pathForca;
@@ -142,30 +229,12 @@ public class ForcaView extends PlanoCartesianoView {
         Paint painttraco = new Paint();
         painttraco.setColor(Color.BLACK);
         painttraco.setStyle(Paint.Style.FILL);
-        painttraco.setStrokeWidth(2);
-        painttraco.setTextSize(25);
+        painttraco.setStrokeWidth(3);
+        painttraco.setTextSize(35);
         return painttraco;
     }
 
-    private void drawLetrasCorretas(Canvas canvas) {
-        int eixoX = toPixel(1);
-        getPathForca().moveTo(eixoX , toPixel(10));
-        eixoX += 35;
 
-        if(getForcaController() == null) {
-            return;
-
-        }
-
-        for(int i = 0; i < getForcaController().getPalavraAteAgora().length(); i++) {
-            char c = getForcaController().getPalavraAteAgora().charAt(i);
-            canvas.drawText(c+"",
-                                eixoX +
-                                        ((toPixel(1) + 6) * i),
-                                            toPixel(10)- 15,
-                                                getPaintTraco());
-        }
-    }
 
     public ForcaController getForcaController() {
         return forcaController;

@@ -28,7 +28,7 @@ public class InserirPalavrasActivity extends AppCompatActivity {
             public void onClick(View view) {
                 insertWordTask(etNewWord);
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra(PALAVRA, etNewWord.getText().toString());
+                resultIntent.putExtra(PALAVRA, etNewWord.getText().toString().toLowerCase());
                 setResult(Activity.RESULT_OK,  resultIntent);
                 finish();
             }

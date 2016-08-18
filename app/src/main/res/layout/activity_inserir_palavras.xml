@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:hint="Insert the word you want to insert"
         android:id="@+id/etNewWord"
-        android:maxLength="9"
+        android:maxLength="60"
         />
 
     <RelativeLayout

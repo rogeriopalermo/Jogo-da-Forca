@@ -2,6 +2,7 @@ package br.com.jogorogerio.jogodaforca;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Path;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.List;
@@ -29,6 +31,7 @@ public class Main extends AppCompatActivity {
     private Button btPlay;
     private EditText etLetra;
     private ForcaView forcaView;
+    private CustomBackgroundView cbv;
     private ForcaController forcaController;
     private List<OptionName> wordsList;
     private String wordRegisteredForGame = "";
@@ -43,6 +46,10 @@ public class Main extends AppCompatActivity {
         etLetra = (EditText) findViewById(R.id.etLetra);
 
         forcaView = (ForcaView) findViewById(R.id.fvJogo);
+        cbv = (CustomBackgroundView) findViewById(R.id.ivCBV);
+       // RelativeLayout main = (RelativeLayout) findViewById(R.id.mainRelativeLayout);
+       // CustomBackgroundView cbv = new CustomBackgroundView(this);
+       // main.addView(cbv);
 
         init();
 
@@ -141,6 +148,7 @@ public class Main extends AppCompatActivity {
 
     private void startGame() {
         forcaView.setForcaController(getForcaController());
+        cbv.invalidate();
         forcaView.invalidate();
         forcaView.setPathForca(new Path()); // restarting the path the drawing of the hangman AND the letters' gaps will be reseted.
         etLetra.getText().clear();

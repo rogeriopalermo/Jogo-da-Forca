@@ -17,6 +17,7 @@ import br.com.jogorogerio.jogodaforca.viewHolder.OptionsViewHolder;
  */
 public class ListaAdapter extends BaseAdapter{
 
+    public static final int SIZE_LIMIT = 22;
     private final Context context;
     private final List<OptionName> listaNomes;
 
@@ -57,7 +58,11 @@ public class ListaAdapter extends BaseAdapter{
             viewHolder = (OptionsViewHolder) mainView.getTag();
         }
 
-        viewHolder.fieldName.setText(option.getNome());
+        String textAdapter = option.getNome();
+     //   if(textAdapter.length() > SIZE_LIMIT) {
+     //       textAdapter = textAdapter.substring(0, SIZE_LIMIT) + "...";
+        //  }
+        viewHolder.fieldName.setText(textAdapter);
         String tamanho;
         if (option.getNome().length() > 1) {
             tamanho = option.getNome().length() + " letras";
